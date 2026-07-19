@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:suitmedia_mobile_dev_intern/core/providers/app_providers.dart';
 import 'package:suitmedia_mobile_dev_intern/widgets/custom_button.dart';
 
+import 'third_screen.dart';
+
 class SecondScreen extends StatelessWidget {
   const SecondScreen({super.key});
 
