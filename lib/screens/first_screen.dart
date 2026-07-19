@@ -5,6 +5,7 @@ import 'package:suitmedia_mobile_dev_intern/widgets/custom_button.dart';
 import 'package:suitmedia_mobile_dev_intern/widgets/custom_text_field.dart';
 
 import '../core/providers/app_providers.dart';
+import 'second_screen.dart';
 
 class FirstScreen extends StatefulWidget {
   const FirstScreen({super.key});
