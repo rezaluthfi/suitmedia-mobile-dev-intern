@@ -20,10 +20,10 @@ class CustomTextField extends StatelessWidget {
         fillColor: Colors.white,
         filled: true,
         contentPadding: const EdgeInsets.only(
-          left: 20,
-          right: 16,
-          top: 16,
-          bottom: 16,
+          left: 16,
+          right: 12,
+          top: 12,
+          bottom: 12,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
