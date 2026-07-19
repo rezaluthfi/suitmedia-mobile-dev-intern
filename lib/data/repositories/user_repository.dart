@@ -9,7 +9,7 @@ class UserRepository {
 
   Future<List<User>> getUserList({required int page, int perPage = 6}) async {
     try {
-      return await _apiService.fetchUsersRaw(page: page, perPage: page);
+      return await _apiService.fetchUsersRaw(page: page, perPage: perPage);
     } catch (e) {
       rethrow;
     }

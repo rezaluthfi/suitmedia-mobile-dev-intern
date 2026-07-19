@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:suitmedia_mobile_dev_intern/core/providers/app_providers.dart';
+import 'package:suitmedia_mobile_dev_intern/core/providers/app_providers.dart'; // Sesuaikan jika nama file kamu app_provider.dart
 
 class ThirdScreen extends StatefulWidget {
   const ThirdScreen({super.key});
@@ -17,16 +17,12 @@ class _ThirdScreenState extends State<ThirdScreen> {
   @override
   void initState() {
     super.initState();
-    // Memicu API data loading pertama kali
     Future.delayed(Duration.zero, () {
-      context.read<AppProvider>().fetchUsers(isRefresh: true);
-    });
+      final provider = context.read<AppProvider>();
 
-    // Mendaftarkan deteksi scroll untuk memicu pagination otomatis saat sampai dasar halaman
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 100) {
-        context.read<AppProvider>().fetchUsers();
+      // Hanya lakukan fetch awal jika data user masih benar-benar kosong
+      if (provider.users.isEmpty) {
+        provider.fetchUsers(isRefresh: true);
       }
     });
   }
@@ -64,15 +60,29 @@ class _ThirdScreenState extends State<ThirdScreen> {
         ),
         centerTitle: true,
       ),
-      body: RefreshIndicator(
-        child: _buildBody(provider),
-        onRefresh: () => provider.fetchUsers(isRefresh: true),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          // Jika user men-scroll hingga mencapai batas bawah (maxScrollExtent)
+          if (scrollInfo.metrics.pixels >=
+              scrollInfo.metrics.maxScrollExtent - 50) {
+            // Pastikan tidak sedang loading dan data berikutnya memang masih ada
+            if (!provider.isLoading && provider.hasMore) {
+              provider.fetchUsers();
+            }
+          }
+          return true;
+        },
+        child: RefreshIndicator(
+          color: const Color(0xFF2B637B),
+          onRefresh: () => provider.fetchUsers(isRefresh: true),
+          child: _buildBody(provider),
+        ),
       ),
     );
   }
 
   Widget _buildBody(AppProvider provider) {
-    // Tampilkan oading shimmer jika list kosong
+    // Tampilkan loading shimmer jika list kosong di awal
     if (provider.isLoading && provider.users.isEmpty) {
       return _buildshimmerLoading();
     }
@@ -105,7 +115,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
       separatorBuilder: (context, index) =>
           const Divider(height: 1, color: Color(0xFFE2E8F0)),
       itemBuilder: (context, index) {
-        // Shimmer loading mini di baris paling bawah saat loading page berikutnya
+        // Shimmer loading mini di baris paling bawah saat mengambil data halaman berikutnya
         if (index == provider.users.length) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -131,7 +141,6 @@ class _ThirdScreenState extends State<ThirdScreen> {
             vertical: 8,
             horizontal: 4,
           ),
-          // Penggunaan CachedNetworkImage
           leading: CachedNetworkImage(
             imageUrl: user.avatar,
             imageBuilder: (context, imageProvider) =>
@@ -167,9 +176,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
             ),
           ),
           onTap: () {
-            // Set data user diilih ke Provider
             provider.setSelectedUserName(fullname);
-            // Back ke SecondScreen dan perbarui UI secara instant
             Navigator.pop(context);
           },
         );
@@ -209,7 +216,6 @@ class _ThirdScreenState extends State<ThirdScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-
                       Container(
                         width: 100,
                         height: 10,

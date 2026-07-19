@@ -64,7 +64,7 @@ class _FirstScreenState extends State<FirstScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'assets/images/logo.png',
+                    'assets/images/add_photo.png',
                     width: 116,
                     height: 116,
                     fit: BoxFit.contain,
